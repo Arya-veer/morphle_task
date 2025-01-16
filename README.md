@@ -15,6 +15,7 @@ This project consists of a backend built with Django and Django REST framework, 
 1. Navigate to the backend directory:
 
     ```sh
+    cd morphle_task
     cd backend
     ```
 
@@ -42,6 +43,7 @@ This project consists of a backend built with Django and Django REST framework, 
 1. Navigate to the frontend directory:
 
     ```sh
+    cd ..
     cd frontend/camera_mover
     ```
 
