@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from app.views import MovementAPI
+from app.views import MovementAPI, BoardSettingsAPI, ResetCameraAPI
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('movement/', MovementAPI.as_view())
+    path('movement/', MovementAPI.as_view()),
+    path('board_settings/', BoardSettingsAPI.as_view()),
+    path('reset_camera/', ResetCameraAPI.as_view()),
 ]
