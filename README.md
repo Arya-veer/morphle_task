@@ -69,5 +69,5 @@ This project consists of a backend built with Django and Django REST framework, 
 ## Enhancements
 
 - Use of websockets instead of polling
-- Keep a check whether camera is going out of the slide
+- Keep a check whether camera is going out of the slide (Done, bounds currently set to 30 units in X direction and 10 units in Y direction)
 - Deploying the code to be used as a service
