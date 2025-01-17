@@ -20,7 +20,7 @@ export default function Home() {
 
     useEffect(() => {
         setInterval(() => {
-            fetch("http://52.172.219.28/movement/").then(
+            fetch("http://52.172.219.28/back/movement/").then(
                 (res) => {
                     res.json().then((data) => {
                         setPosition({
@@ -40,7 +40,7 @@ export default function Home() {
 
     const handleKeyPress = (e) => {
         if (keyMap[e.key]) {
-            fetch(`http://52.172.219.28/movement/`, {
+            fetch(`http://52.172.219.28/back/movement/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
