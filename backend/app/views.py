@@ -22,6 +22,8 @@ class Camera(metaclass = Singleton):
     
     def __init__(self):
         self.reset()
+        self.current_position = [N_ROWS//2,N_COLS//2]
+        self.is_focussed = True
         self.thread = threading.Thread(target=self.handle_camera)
         self.thread.start()
     
@@ -49,8 +51,6 @@ class Camera(metaclass = Singleton):
         
     def reset(self):
         self.target_position = [N_ROWS//2,N_COLS//2]
-        self.current_position = [N_ROWS//2,N_COLS//2]
-        self.is_focussed = True
 
 
 class BoardSettingsAPI(APIView):
