@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 
 const BASE_URL = "http://52.172.219.28/back";
+// const BASE_URL = "http://localhost:8000";
 
 function Cell({ color }) {
     return (

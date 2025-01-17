@@ -4,8 +4,8 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 import threading
 import time
 
-N_ROWS = 60
-N_COLS = 60
+N_ROWS = 10
+N_COLS = 10
 
 
 
@@ -21,14 +21,17 @@ class Camera(metaclass = Singleton):
 
     
     def __init__(self):
-        self.reset()
+        self.target_position = [N_ROWS//2,N_COLS//2]
         self.current_position = [N_ROWS//2,N_COLS//2]
         self.is_focussed = True
+        self.is_reset = True
+        # self.sem = threading.Lock()
         self.thread = threading.Thread(target=self.handle_camera)
         self.thread.start()
     
     def handle_camera(self):
         while True:
+            # self.sem.acquire()
             if self.target_position[0] == self.current_position[0] and self.target_position[1] == self.current_position[1]:
                 if not self.is_focussed:
                     self.focus()
@@ -40,18 +43,28 @@ class Camera(metaclass = Singleton):
                 difference = self.target_position[1] - self.current_position[1]
                 self.move('y', difference)
                 self.current_position[1] += difference
+            # self.sem.release()
     
     def move(self, direction,units):
         self.is_focussed = False
         time.sleep(3*((abs(units))**(0.5)))
         
+        
     def focus(self):
         time.sleep(2)
         self.is_focussed = True
+
         
     def reset(self):
+        # while self.current_position != self.target_position:
+            # Current thread to wait
+        # self.sem.acquire()
         self.target_position = [N_ROWS//2,N_COLS//2]
-
+        # self.current_position = [N_ROWS//2,N_COLS//2]
+        # self.is_focussed = True
+        self.is_reset = True
+        # self.sem.release()
+        
 
 class BoardSettingsAPI(APIView):
     
@@ -81,7 +94,7 @@ class MovementAPI(APIView):
                 return Response({'status': 'error', 'message': 'x is out of bounds'},status=HTTP_400_BAD_REQUEST)
             if camera.target_position[1] + data['y'] >= N_COLS or camera.target_position[1] + data['y'] < 0:
                 return Response({'status': 'error', 'message': 'y is out of bounds'},status=HTTP_400_BAD_REQUEST)
-            
+            camera.is_reset = False
             camera.target_position[0] += data['x']
             camera.target_position[1] += data['y']
             
@@ -93,10 +106,15 @@ class MovementAPI(APIView):
     def get(self, request):
         camera = Camera()
         color = 'white'
+        # if camera.is_reset:
+        #     color = 'blue'
         if camera.current_position != camera.target_position:
             color = 'orange'
         elif camera.is_focussed:
             color = 'red'
         else:
-            color = 'green'
+            if not camera.is_reset:
+                color = 'green'
+            else:
+                color = 'orange'
         return Response({'status': 'ok', 'current_position': camera.current_position, 'color':color},status=HTTP_200_OK)
