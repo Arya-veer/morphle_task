@@ -16,6 +16,8 @@ export default function Home() {
         ArrowLeft: [-1, 0],
     };
 
+    const [error, setError] = useState(null);
+
     useEffect(() => {
         setInterval(() => {
             fetch("http://localhost:8000/movement/").then(
@@ -47,17 +49,31 @@ export default function Home() {
                     x: keyMap[e.key][0],
                     y: keyMap[e.key][1],
                 }),
+            }).then((res) => {
+                if (res.status === 400) {
+                    res.json().then((data) => {
+                        setError(data["message"]);
+                    });
+                } else {
+                    setError(null);
+                }
             });
         }
     };
 
     return (
         <div
-            className='h-screen w-screen bg-gray-200 pt-20'
+            className='h-screen w-screen bg-gray-200 p-4 flex flex-col items-center'
             ref={divRef}
             tabIndex='0'
             onKeyUp={handleKeyPress}
         >
+            <h1 className='text-4xl text-center text-black'>
+                Camera Mover
+            </h1>
+            {error && (
+                <p className='text-red-500'>{error}</p>
+            )}
             <div className='relative w-1/2 h-1/2 mx-auto bg-white border-2 border-black'>
                 <div
                     style={{

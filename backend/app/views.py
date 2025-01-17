@@ -9,6 +9,9 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 import threading
 import time
 
+from .constants import ALLOWED_BOUND_X_AXIS, ALLOWED_BOUND_Y_AXIS
+
+
 
 
 class Singleton(type):
@@ -60,8 +63,15 @@ class MovementAPI(APIView):
         data = request.data
         camera = Camera()
         try:
+            
+            if camera.target_position[0] + data['x'] > ALLOWED_BOUND_X_AXIS or camera.target_position[0] + data['x'] < -ALLOWED_BOUND_X_AXIS:
+                return Response({'status': 'error', 'message': 'x is out of bounds'},status=HTTP_400_BAD_REQUEST)
+            if camera.target_position[1] + data['y'] > ALLOWED_BOUND_Y_AXIS or camera.target_position[1] + data['y'] < -ALLOWED_BOUND_Y_AXIS:
+                return Response({'status': 'error', 'message': 'y is out of bounds'},status=HTTP_400_BAD_REQUEST)
+            
             camera.target_position[0] += data['x']
             camera.target_position[1] += data['y']
+            
         except KeyError:
             return Response({'status': 'error', 'message': 'x and y are required'},status=HTTP_400_BAD_REQUEST)
         return Response({'status': 'ok', 'current_position': camera.target_position},status=HTTP_200_OK)
