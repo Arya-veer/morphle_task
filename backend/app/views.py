@@ -24,14 +24,12 @@ class Camera(metaclass = Singleton):
         self.target_position = [N_ROWS//2,N_COLS//2]
         self.current_position = [N_ROWS//2,N_COLS//2]
         self.is_focussed = True
-        self.is_reset = True
-        # self.sem = threading.Lock()
+        self.is_reset = False
         self.thread = threading.Thread(target=self.handle_camera)
         self.thread.start()
     
     def handle_camera(self):
-        while True:
-            # self.sem.acquire()
+        while not self.is_reset:
             if self.target_position == self.current_position:
                 if not self.is_focussed:
                     self.focus()
@@ -51,14 +49,16 @@ class Camera(metaclass = Singleton):
 
         
     def reset(self):
-        # while self.current_position != self.target_position:
-            # Current thread to wait
-        # self.sem.acquire()
-        self.target_position = [N_ROWS//2,N_COLS//2]
-        # self.current_position = [N_ROWS//2,N_COLS//2]
-        # self.is_focussed = True
+        print('resetting')
         self.is_reset = True
-        # self.sem.release()
+        self.thread.join()
+        self.target_position = [N_ROWS//2,N_COLS//2]
+        self.current_position = [N_ROWS//2,N_COLS//2]
+        self.is_focussed = True
+        self.is_reset = False
+        self.thread = threading.Thread(target=self.handle_camera)
+        self.thread.start()
+        print('resetted')
         
 
 class BoardSettingsAPI(APIView):
@@ -101,15 +101,10 @@ class MovementAPI(APIView):
     def get(self, request):
         camera = Camera()
         color = 'white'
-        # if camera.is_reset:
-        #     color = 'blue'
         if camera.current_position != camera.target_position:
             color = 'orange'
         elif camera.is_focussed:
             color = 'red'
         else:
-            if not camera.is_reset:
-                color = 'green'
-            else:
-                color = 'orange'
+            color = 'green'
         return Response({'status': 'ok', 'current_position': camera.current_position, 'color':color},status=HTTP_200_OK)
