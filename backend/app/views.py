@@ -32,18 +32,13 @@ class Camera(metaclass = Singleton):
     def handle_camera(self):
         while True:
             # self.sem.acquire()
-            if self.target_position[0] == self.current_position[0] and self.target_position[1] == self.current_position[1]:
+            if self.target_position == self.current_position:
                 if not self.is_focussed:
                     self.focus()
-            if self.target_position[0] != self.current_position[0]:
-                difference = self.target_position[0] - self.current_position[0]
-                self.move('x', difference)
-                self.current_position[0] += difference
-            if self.target_position[1] != self.current_position[1]:
-                difference = self.target_position[1] - self.current_position[1]
-                self.move('y', difference)
-                self.current_position[1] += difference
-            # self.sem.release()
+            if self.target_position != self.current_position:
+                difference_x,difference_y = self.target_position[0] - self.current_position[0], self.target_position[1] - self.current_position[1]
+                self.move('x', abs(difference_x) + abs(difference_y))
+                self.current_position = [self.current_position[0] + difference_x, self.current_position[1] + difference_y]
     
     def move(self, direction,units):
         self.is_focussed = False
