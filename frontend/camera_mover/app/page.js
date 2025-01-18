@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 
-// const BASE_URL = "http://52.172.219.28/back";
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://52.172.219.28/back";
+// const BASE_URL = "http://localhost:8000";
 
 export default function Home() {
     const [position, setPosition] = useState({ x: 0, y: 0 });
